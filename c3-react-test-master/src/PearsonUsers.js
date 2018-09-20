@@ -37,6 +37,7 @@ export class PearsonUsers extends Component {
       isLoading : false,
       page: 1,
       totalPage: null,
+      isDeleted: false,
     };
   }
 
@@ -61,23 +62,27 @@ export class PearsonUsers extends Component {
   }
 
   componentDidUpdate() {
-    let query = `?page=${this.state.page}&per_page=10`;
-    fetch(apiURL+query)
-      .then(response => response.json())
-      .then(data => {
-        let combinedData = this.state.users.concat(data.data); // Point 2 covered till here
-        combinedData = combinedData.filter((data, index, self) => // Point 3 covered here
-          index === self.findIndex((t) => (
-            t.id === data.id && t.first_name === data.first_name && t.last_name === data.last_name
-          ))
-        );
-        this.setState({ users: combinedData }); // new users from API added at the end of existing data & duplicates are removed
-      });
+    if (!this.state.isDeleted) {
+      let query = `?page=${this.state.page}&per_page=10`;
+      fetch(apiURL+query)
+        .then(response => response.json())
+        .then(data => {
+          let combinedData = this.state.users.concat(data.data); // Point 2 covered till here
+          combinedData = combinedData.filter((data, index, self) => // Point 3 covered here
+            index === self.findIndex((t) => (
+              t.id === data.id && t.first_name === data.first_name && t.last_name === data.last_name
+            ))
+          );
+          this.setState({ users: combinedData }); // new users from API added at the end of existing data & duplicates are removed
+        });
+    }    
   }
 
   myCallback = (idToDelete) => {
-    const updatedData = this.state.users.filter(user => user.id !== idToDelete);
-    this.setState({ users: updatedData });
+    this.setState({ isDeleted: true }, () => {
+      const updatedData = this.state.users.filter(user => user.id !== idToDelete);
+      this.setState({ users: updatedData });
+    });    
   }
 
   render() {
@@ -109,8 +114,9 @@ export class PearsonUsers extends Component {
           this.state.page < this.state.totalPage ?
             <button
               onClick={
-                () => this.setState({ page: this.state.page + 1 })
+                () => this.setState({ isDeleted: false, page: this.state.page + 1 })
               }
+              className="loading-button"
             >
               Load More
             </button> : null

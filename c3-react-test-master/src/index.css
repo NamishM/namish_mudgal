@@ -10,7 +10,7 @@ body {
 }
 
 .pearon-users {
-  margin: 10px 0 0;
+  padding: 10px 0 0;
 }
 
 h1 {
@@ -69,4 +69,12 @@ ul {
 
 .action-button:focus {
   outline: none;
+}
+
+.loading-button {
+  cursor: pointer;
+  margin: 0 10px;
+  background: #3F9FBA;
+  color: #fff;
+  border: 1px solid #09d2d2;
 }
