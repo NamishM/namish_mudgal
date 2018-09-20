@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import UserProfile from './UserProfile';
 
-const apiURL = 'https://reqres.in/api/users?page=1&per_page=10';
+const apiURL = 'https://reqres.in/api/users';
 const concat = (...args) => {
   return args.reduce((acc, val) => [...acc, ...val]);
 };
@@ -35,12 +35,15 @@ export class PearsonUsers extends Component {
         }
       ],
       isLoading : false,
+      page: 1,
+      totalPage: null,
     };
   }
 
   componentDidMount() {
     this.setState({ isLoading: true });
-    fetch(apiURL)
+    let query = `?page=${this.state.page}&per_page=10`;
+    fetch(apiURL+query)
       .then(response => response.json())
       .then(data => {
         let combinedData = this.state.users.concat(data.data); // Point 2 covered till here
@@ -49,7 +52,26 @@ export class PearsonUsers extends Component {
             t.id === data.id && t.first_name === data.first_name && t.last_name === data.last_name
           ))
         );
-        this.setState({ users: combinedData, isLoading: false }); // new users from API added at the end of existing data & duplicates are removed
+        this.setState({ users: combinedData, isLoading: false, totalPage: data.total_pages }); // new users from API added at the end of existing data & duplicates are removed
+      });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.page !== nextState.page || this.state.users.length !== nextState.users.length;
+  }
+
+  componentDidUpdate() {
+    let query = `?page=${this.state.page}&per_page=10`;
+    fetch(apiURL+query)
+      .then(response => response.json())
+      .then(data => {
+        let combinedData = this.state.users.concat(data.data); // Point 2 covered till here
+        combinedData = combinedData.filter((data, index, self) => // Point 3 covered here
+          index === self.findIndex((t) => (
+            t.id === data.id && t.first_name === data.first_name && t.last_name === data.last_name
+          ))
+        );
+        this.setState({ users: combinedData }); // new users from API added at the end of existing data & duplicates are removed
       });
   }
 
@@ -83,6 +105,16 @@ export class PearsonUsers extends Component {
           )
         }
         </ul>
+        {
+          this.state.page < this.state.totalPage ?
+            <button
+              onClick={
+                () => this.setState({ page: this.state.page + 1 })
+              }
+            >
+              Load More
+            </button> : null
+        }        
       </div>
     );
   }
