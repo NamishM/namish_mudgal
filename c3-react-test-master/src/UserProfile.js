@@ -8,8 +8,8 @@ const UserProfile = ({
     callbackFromParent,
 }) => (
     <div className="user-profile">
-        <div className="profile-contaier">
-            <div className="user-image"><img src={avatar} alt="user" /></div>
+        <div className="profile-container">
+            <div className="user-image"><img src={avatar} alt={first_name} className="prof-img" /></div>
             <div className="user-name">{`${first_name} ${last_name}`}</div>
         </div>
         <button

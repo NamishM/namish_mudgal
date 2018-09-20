@@ -54,6 +54,8 @@ export class PearsonUsers extends Component {
           ))
         );
         this.setState({ users: combinedData, isLoading: false, totalPage: data.total_pages }); // new users from API added at the end of existing data & duplicates are removed
+      }).catch(error => {
+        console.log(apiURL + ' error: ', error);
       });
   }
 
@@ -74,6 +76,8 @@ export class PearsonUsers extends Component {
             ))
           );
           this.setState({ users: combinedData }); // new users from API added at the end of existing data & duplicates are removed
+        }).catch(error => {
+          console.log(apiURL + ' error: ', error);
         });
     }    
   }

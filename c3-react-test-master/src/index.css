@@ -43,11 +43,11 @@ ul {
     right: 0;
 }
 
-.profile-contaier {
+.profile-container{
     text-align: center;
 }
 
-.profile-contaier img {
+.prof-img {
   height: 80px;
   border-radius: 40px;
 }
